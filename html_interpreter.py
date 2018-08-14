@@ -1,25 +1,36 @@
 #!/usr/bin/python
+import os
 from lxml import html
 
-file = open("test.html","r")
+files = os.listdir( os.getcwd() )
 
-html_file = file.read()
+all_titels = set()
 
-tree = html.fromstring(html_file)
+for file_name in files:
+    try:
+        file = open(file_name, "r")
 
-search_results = tree.xpath("//div[contains(@class, 'col-22-24')]")
-# search_results = tree.xpath("//a[contains(@class, 'ng-binding ng-scope')]")
+        html_file = file.read()
 
-titels = set()
+        tree = html.fromstring(html_file)
 
-for result in search_results:
-    for element in result.getchildren():
-        if element.tag == 'h2':
-            for text in element.getchildren():
-                if text.tag == 'a':
-                    titels.add(text.text_content())
+        search_results = tree.xpath("//div[contains(@class, 'col-22-24')]")
 
-for titel in titels:
-    print titel
+        titels = set()
 
-print "Results: " + str(len(titels))
+        for result in search_results:
+            for element in result.getchildren():
+                if element.tag == 'h2':
+                    for text in element.getchildren():
+                        if text.tag == 'a':
+                            titels.add(text.text_content())
+                            all_titels.add(text.text_content())
+
+        for titel in titels:
+            print titel
+
+        print "Results: " + str(len(titels))
+    except:
+        print "failed to open " + file_name
+
+print "Results: " + str(len(all_titels))
