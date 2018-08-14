@@ -2,35 +2,39 @@
 import os
 from lxml import html
 
-files = os.listdir( os.getcwd() )
+def interprete_html( download_folder ):
+    files = os.listdir( download_folder )
 
-all_titels = set()
+    all_titels = set()
 
-for file_name in files:
-    try:
-        file = open(file_name, "r")
+    for file_name in files:
+        try:
+            file = open(download_folder + file_name, "r")
 
-        html_file = file.read()
+            html_file = file.read()
 
-        tree = html.fromstring(html_file)
+            tree = html.fromstring(html_file)
 
-        search_results = tree.xpath("//div[contains(@class, 'col-22-24')]")
+            search_results = tree.xpath("//div[contains(@class, 'col-22-24')]")
 
-        titels = set()
+            for result in search_results:
+                for element in result.getchildren():
+                    if element.tag == 'h2':
+                        for text in element.getchildren():
+                            if text.tag == 'a':
+                                string = text.attrib.get("href")
+                                # string = text.attrib.get("href") + " :  " + text.text_content()
+                                all_titels.add(string)
+        except:
+            print "failed to open " + file_name
 
-        for result in search_results:
-            for element in result.getchildren():
-                if element.tag == 'h2':
-                    for text in element.getchildren():
-                        if text.tag == 'a':
-                            titels.add(text.text_content())
-                            all_titels.add(text.text_content())
+    return all_titels
 
-        for titel in titels:
-            print titel
+if __name__ == '__main__':
+    relative_folder = "/download/"
+    download_folder = os.getcwd() + relative_folder
 
-        print "Results: " + str(len(titels))
-    except:
-        print "failed to open " + file_name
+    print download_folder
 
-print "Results: " + str(len(all_titels))
+    results = interprete_html(download_folder)
+    print results
