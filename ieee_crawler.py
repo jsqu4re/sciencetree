@@ -20,15 +20,14 @@ class Browser(QWebView):
         self.setWindowTitle('IEEE')
         self.load(url)
         self.timer = QTimer(self)
-        # self.timer.singleShot(20000, self.do_quit)
-        # self.timer = QTimer(self)
+
         self.timer.timeout.connect(self.do_quit)
-        self.timer.setInterval(20000)
-        # self.timer.setSingleShot(True)
+        self.timer.setInterval(10000)
+
         self.timer.start()
         self.app.exec_()
         self.timer.stop()
-    
+
     def do_quit(self):
         self.app.quit()
 
