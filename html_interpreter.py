@@ -14,9 +14,9 @@ def interprete_html( download_folder ):
             html_file = file.read()
 
             tree = html.fromstring(html_file)
-
             search_results = tree.xpath("//div[contains(@class, 'col-22-24')]")
 
+            titel = set()
             for result in search_results:
                 for element in result.getchildren():
                     if element.tag == 'h2':
@@ -24,9 +24,12 @@ def interprete_html( download_folder ):
                             if text.tag == 'a':
                                 string = text.attrib.get("href")
                                 # string = text.attrib.get("href") + " :  " + text.text_content()
+                                titel.add(string)
                                 all_titels.add(string)
+            if (len(titel) != 10):
+                print "ERROR: found only " + str(len(titel)) + " entries"
         except:
-            print "failed to open " + file_name
+            print "ERROR: failed to open " + file_name
 
     return all_titels
 

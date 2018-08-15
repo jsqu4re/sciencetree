@@ -22,7 +22,7 @@ class Browser(QWebView):
         self.timer = QTimer(self)
 
         self.timer.timeout.connect(self.do_quit)
-        self.timer.setInterval(10000)
+        self.timer.setInterval(20000)
 
         self.timer.start()
         self.app.exec_()
@@ -35,13 +35,20 @@ class Browser(QWebView):
         self.setUrl(QUrl(url))
 
 def render_search(q, page_number, query_text, absolute_path):
-    file = open(absolute_path + "ieee_download_" + str(page_number) + ".html", "w")
-    view = Browser("https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=(%22" + query_text + "%22)&matchBoolean=true&pageNumber=" + str(page_number) + "&rowsPerPage=10&searchField=Search_All")
-    file.write(view.page().mainFrame().toHtml().encode('ascii','ignore'))
-    q.put( "Created " + file.name )
+    try:
+        file = open(absolute_path + "ieee_download_" + str(page_number) + ".html", "w")
+        view = Browser("https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=(%22" + query_text + "%22)&matchBoolean=true&pageNumber=" + str(page_number) + "&rowsPerPage=10&searchField=Search_All")
+        file.write(view.page().mainFrame().toHtml().encode('ascii','ignore'))
+        q.put( "Created " + file.name )
+    except:
+        print "ERROR: render failed"
 
 def render_article(q, article_address, absolute_path):
-    file = open(absolute_path + "ieee_paper_" + article_address.replace("/","_") + ".html", "w")
-    view = Browser("https://ieeexplore.ieee.org/" + article_address)
-    file.write(view.page().mainFrame().toHtml().encode('ascii','ignore'))
-    q.put( "Created " + file.name )
+    try:
+        file = open(absolute_path + "ieee_paper_" + article_address.replace("/","_") + ".html", "w")
+        view = Browser("https://ieeexplore.ieee.org/" + article_address)
+        file.write(view.page().mainFrame().toHtml().encode('ascii','ignore'))
+        q.put( "Created " + file.name )
+    except:
+        print "ERROR: render failed"
+
